@@ -1,4 +1,4 @@
-import { Prefab } from 'cc';
+import { Prefab, SpriteFrame } from 'cc';
 import Singleton from '../Base/Singleton';
 import { EntityTypeEnum, IActorMove, IState } from '../Common';
 import { ActorManager } from '../Entity/Actor/ActorManager';
@@ -13,6 +13,7 @@ export default class DataManager extends Singleton {
     jm: JoyStickManager;
     actorMap: Map<number, ActorManager> = new Map();
     prefabMap: Map<string, Prefab> = new Map();
+    textureMap: Map<string, SpriteFrame[]> = new Map();
 
     state: IState = {
         actors: [

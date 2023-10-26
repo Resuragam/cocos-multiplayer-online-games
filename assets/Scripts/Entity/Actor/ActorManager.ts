@@ -1,11 +1,19 @@
 import { _decorator, Component } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { IActor, InputTypeEnum } from '../../Common';
+import { EntityManager } from '../../Base/EntityManager';
+import { ActorStateMachine } from './ActorStateMechine';
+import { EntityStateEnum } from '../../Enum';
 const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
-export class ActorManager extends Component {
-    init(data: IActor) {}
+export class ActorManager extends EntityManager {
+    init(data: IActor) {
+        this.fsm = this.addComponent(ActorStateMachine);
+        this.fsm.init(data.type);
+
+        this.state = EntityStateEnum.Idle;
+    }
 
     tick(dt) {
         if (DataManager.Instance.jm.input.length()) {
@@ -19,7 +27,10 @@ export class ActorManager extends Component {
                 },
                 dt,
             });
-            console.log(DataManager.Instance.state.actors[0].position.x, DataManager.Instance.state.actors[0].position.y);
+
+            this.state = EntityStateEnum.Run;
+        } else {
+            this.state = EntityStateEnum.Idle;
         }
     }
 
