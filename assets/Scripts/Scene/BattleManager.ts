@@ -5,6 +5,7 @@ import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { EntityTypeEnum } from '../Common';
+import { BulletManager } from '../Entity/Bullet/BulletManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -73,6 +74,7 @@ export class BattleManager extends Component {
 
     render() {
         this.renderActor();
+        this.renderBullet();
     }
 
     async renderActor() {
@@ -88,6 +90,23 @@ export class BattleManager extends Component {
                 am.init(data);
             } else {
                 am.render(data);
+            }
+        }
+    }
+
+    async renderBullet() {
+        for (const data of DataManager.Instance.state.bullets) {
+            const { id, type } = data;
+            let bm = DataManager.Instance.bulletMap.get(id);
+            if (!bm) {
+                const prefab = DataManager.Instance.prefabMap.get(type);
+                const actor = instantiate(prefab);
+                actor.setParent(this.stage);
+                bm = actor.addComponent(BulletManager);
+                DataManager.Instance.bulletMap.set(id, bm);
+                bm.init(data);
+            } else {
+                bm.render(data);
             }
         }
     }
