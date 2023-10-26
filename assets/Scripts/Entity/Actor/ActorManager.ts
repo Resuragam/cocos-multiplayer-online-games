@@ -10,11 +10,13 @@ const { ccclass, property } = _decorator;
 
 @ccclass('ActorManager')
 export class ActorManager extends EntityManager {
+    id: number;
     bulletType: EntityTypeEnum;
     private wm: WeaponManager;
     init(data: IActor) {
+        this.id = data.id;
         this.bulletType = data.bulletType;
-        
+
         this.fsm = this.addComponent(ActorStateMachine);
         this.fsm.init(data.type);
 
@@ -28,6 +30,9 @@ export class ActorManager extends EntityManager {
     }
 
     tick(dt) {
+        if (this.id !== DataManager.Instance.myPlayerId) {
+            return;
+        }
         if (DataManager.Instance.jm.input.length()) {
             const { x, y } = DataManager.Instance.jm.input;
             DataManager.Instance.applyInput({
