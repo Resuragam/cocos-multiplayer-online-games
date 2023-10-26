@@ -13,6 +13,9 @@ const BULLET_SPEED = 600;
 const MAP_WIDTH = 960;
 const MAP_HEIGHT = 640;
 
+const ACTOR_RADIUS = 50;
+const BULLET_RADIUS = 10;
+
 export default class DataManager extends Singleton {
     static get Instance() {
         return super.GetInstance<DataManager>();
@@ -99,9 +102,18 @@ export default class DataManager extends Singleton {
 
             case InputTypeEnum.TimePast: {
                 const { dt } = input;
-                const { bullets } = this.state;
+                const { bullets, actors } = this.state;
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const bullet = bullets[i];
+                    for (let j = actors.length - 1; j >= 0; j--) {
+                        const actor = actors[j];
+                        if ((actor.position.x - bullet.position.x) ** 2 + (actor.position.y - bullet.position.y) ** 2 < (ACTOR_RADIUS + BULLET_RADIUS) ** 2) {
+                            EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, { x: (actor.position.x + bullet.position.x) / 2, y: (actor.position.y + bullet.position.y) / 2 });
+                            bullets.splice(i, 1);
+                            break;
+                        }
+                    }
+
                     if (Math.abs(bullet.position.x) > MAP_WIDTH / 2 || Math.abs(bullet.position.y) > MAP_HEIGHT / 2) {
                         EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, { x: bullet.position.x, y: bullet.position.y });
                         bullets.splice(i, 1);
