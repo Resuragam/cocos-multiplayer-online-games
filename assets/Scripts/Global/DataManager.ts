@@ -4,6 +4,8 @@ import { EntityTypeEnum, IActorMove, IBullet, IClientInput, IState, InputTypeEnu
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { JoyStickManager } from '../UI/JoyStickManager';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
+import EventManager from './EventManager';
+import { EventEnum } from '../Enum';
 
 const ACTOR_SPEED = 100;
 const BULLET_SPEED = 600;
@@ -83,6 +85,7 @@ export default class DataManager extends Singleton {
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const bullet = bullets[i];
                     if (Math.abs(bullet.position.x) > MAP_WIDTH / 2 || Math.abs(bullet.position.y) > MAP_HEIGHT / 2) {
+                        EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, { x: bullet.position.x, y: bullet.position.y });
                         bullets.splice(i, 1);
                     }
                 }
