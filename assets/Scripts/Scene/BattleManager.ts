@@ -6,6 +6,7 @@ import { ActorManager } from '../Entity/Actor/ActorManager';
 import { PrefabPathEnum, TexturePathEnum } from '../Enum';
 import { EntityTypeEnum, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
+import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
@@ -104,10 +105,8 @@ export class BattleManager extends Component {
             const { id, type } = data;
             let bm = DataManager.Instance.bulletMap.get(id);
             if (!bm) {
-                const prefab = DataManager.Instance.prefabMap.get(type);
-                const actor = instantiate(prefab);
-                actor.setParent(this.stage);
-                bm = actor.addComponent(BulletManager);
+                const bullet = ObjectPoolManager.Instance.get(type);
+                bm = bullet.getComponent(BulletManager) || bullet.addComponent(BulletManager);
                 DataManager.Instance.bulletMap.set(id, bm);
                 bm.init(data);
             } else {
