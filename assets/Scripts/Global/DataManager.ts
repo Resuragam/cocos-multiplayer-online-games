@@ -75,6 +75,8 @@ export default class DataManager extends Singleton {
                     type: this.actorMap.get(owner).bulletType,
                 };
 
+                EventManager.Instance.emit(EventEnum.BulletBorn, owner);
+
                 this.state.bullets.push(bullet);
                 break;
             }

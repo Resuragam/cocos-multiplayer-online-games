@@ -25,10 +25,12 @@ export class WeaponManager extends EntityManager {
         this.state = EntityStateEnum.Idle;
 
         EventManager.Instance.on(EventEnum.WeaponShoot, this.handleWeaponShoot, this);
+        EventManager.Instance.on(EventEnum.BulletBorn, this.handleBulletBorn, this);
     }
 
     onDestroy(): void {
         EventManager.Instance.off(EventEnum.WeaponShoot, this.handleWeaponShoot, this);
+        EventManager.Instance.off(EventEnum.BulletBorn, this.handleBulletBorn, this);
     }
 
     handleWeaponShoot() {
@@ -49,5 +51,13 @@ export class WeaponManager extends EntityManager {
             },
         });
         console.log(DataManager.Instance.state.bullets);
+    }
+
+    handleBulletBorn(owner: number) {
+        if (owner !== this.owner) {
+            return;
+        }
+
+        this.state = EntityStateEnum.Attack;
     }
 }
