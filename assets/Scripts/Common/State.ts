@@ -1,4 +1,4 @@
-import { InputTypeEnum } from './Enums';
+import { EntityTypeEnum, InputTypeEnum } from './Enums';
 
 export interface IVec2 {
     x: number;
@@ -9,6 +9,7 @@ export interface IActor {
     id: number;
     position: IVec2;
     direction: IVec2;
+    type: EntityTypeEnum.Actor1
 }
 
 export interface IState {
