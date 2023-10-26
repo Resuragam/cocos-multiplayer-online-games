@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate } from 'cc';
+import { _decorator, Component, instantiate, ProgressBar } from 'cc';
 import DataManager from '../../Global/DataManager';
 import { EntityTypeEnum, IActor, InputTypeEnum } from '../../Common';
 import { EntityManager } from '../../Base/EntityManager';
@@ -12,8 +12,10 @@ const { ccclass, property } = _decorator;
 export class ActorManager extends EntityManager {
     id: number;
     bulletType: EntityTypeEnum;
+    private hp: ProgressBar;
     private wm: WeaponManager;
     init(data: IActor) {
+        this.hp = this.node.getComponentInChildren(ProgressBar);
         this.id = data.id;
         this.bulletType = data.bulletType;
 
@@ -63,5 +65,7 @@ export class ActorManager extends EntityManager {
         const rad = Math.asin(direction.y / side);
         const angle = rad2Angle(rad);
         this.wm.node.setRotationFromEuler(0, 0, angle);
+
+        this.hp.progress = data.hp / this.hp.totalLength;
     }
 }
