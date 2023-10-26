@@ -6,6 +6,11 @@ import { JoyStickManager } from '../UI/JoyStickManager';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
 
 const ACTOR_SPEED = 100;
+const BULLET_SPEED = 600;
+
+const MAP_WIDTH = 960;
+const MAP_HEIGHT = 640;
+
 export default class DataManager extends Singleton {
     static get Instance() {
         return super.GetInstance<DataManager>();
@@ -14,7 +19,7 @@ export default class DataManager extends Singleton {
     stage: Node;
     jm: JoyStickManager;
     actorMap: Map<number, ActorManager> = new Map();
-    bulletMap: Map<number, BulletManager> = new Map()
+    bulletMap: Map<number, BulletManager> = new Map();
     prefabMap: Map<string, Prefab> = new Map();
     textureMap: Map<string, SpriteFrame[]> = new Map();
 
@@ -69,6 +74,22 @@ export default class DataManager extends Singleton {
                 };
 
                 this.state.bullets.push(bullet);
+                break;
+            }
+
+            case InputTypeEnum.TimePast: {
+                const { dt } = input;
+                const { bullets } = this.state;
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    const bullet = bullets[i];
+                    if (Math.abs(bullet.position.x) > MAP_WIDTH / 2 || Math.abs(bullet.position.y) > MAP_HEIGHT / 2) {
+                        bullets.splice(i, 1);
+                    }
+                }
+                for (const bullet of bullets) {
+                    bullet.position.x = bullet.position.x + bullet.direction.x * dt * BULLET_SPEED;
+                    bullet.position.y = bullet.position.y + bullet.direction.y * dt * BULLET_SPEED;
+                }
             }
         }
     }

@@ -20,9 +20,11 @@ export class BulletManager extends EntityManager {
         this.fsm.init(data.type);
 
         this.state = EntityStateEnum.Idle;
+        this.node.active = false;
     }
 
     render(data: IBullet) {
+        this.node.active = true;
         const { direction, position } = data;
         this.node.setPosition(position.x, position.y);
 
