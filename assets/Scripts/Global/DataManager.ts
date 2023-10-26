@@ -36,7 +36,7 @@ export default class DataManager extends Singleton {
         actors: [
             {
                 id: 1,
-                hp: 100,
+                hp: 30,
                 type: EntityTypeEnum.Actor1,
                 weaponType: EntityTypeEnum.Weapon1,
                 bulletType: EntityTypeEnum.Bullet2,

@@ -59,6 +59,7 @@ export class ActorManager extends EntityManager {
 
         if (direction.x !== 0) {
             this.node.setScale(direction.x > 0 ? 1 : -1, 1);
+            this.hp.node.setScale(direction.x > 0 ? 1 : -1, 1);
         }
 
         const side = Math.sqrt(direction.x ** 2 + direction.y ** 2);
