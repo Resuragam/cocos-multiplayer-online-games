@@ -22,6 +22,7 @@ export class BattleManager extends Component {
 
     async start() {
         await this.loadRes();
+        this.initMap();
         this.shouldUpdate = true;
     }
 
@@ -35,6 +36,12 @@ export class BattleManager extends Component {
         }
 
         await Promise.all(list);
+    }
+
+    initMap() {
+        const prefab = DataManager.Instance.prefabMap.get(EntityTypeEnum.Map);
+        const map = instantiate(prefab);
+        map.setParent(this.stage)
     }
 
     update() {
