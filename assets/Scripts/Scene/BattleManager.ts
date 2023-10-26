@@ -41,14 +41,27 @@ export class BattleManager extends Component {
     initMap() {
         const prefab = DataManager.Instance.prefabMap.get(EntityTypeEnum.Map);
         const map = instantiate(prefab);
-        map.setParent(this.stage)
+        map.setParent(this.stage);
     }
 
-    update() {
+    update(dt) {
         if (!this.shouldUpdate) {
             return;
         }
         this.render();
+        this.tick(dt);
+    }
+
+    tick(dt) {
+        this.tickActor(dt);
+    }
+
+    tickActor(dt) {
+        for (const data of DataManager.Instance.state.actors) {
+            const { id } = data;
+            let am = DataManager.Instance.actorMap.get(id);
+            am.tick(dt);
+        }
     }
 
     render() {
