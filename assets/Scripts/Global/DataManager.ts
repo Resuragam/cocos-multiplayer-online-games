@@ -20,6 +20,7 @@ export default class DataManager extends Singleton {
             {
                 id: 1,
                 type: EntityTypeEnum.Actor1,
+                weaponType: EntityTypeEnum.Weapon1,
                 position: {
                     x: 0,
                     y: 0,
