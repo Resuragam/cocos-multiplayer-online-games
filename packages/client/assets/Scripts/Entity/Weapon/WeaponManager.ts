@@ -42,7 +42,7 @@ export class WeaponManager extends EntityManager {
         const pointStagePos = DataManager.Instance.stage.getComponent(UITransform).convertToNodeSpaceAR(pointWorldPos);
         const anchorWorldPos = this.anchor.getWorldPosition();
         const direction = new Vec2(pointWorldPos.x - anchorWorldPos.x, pointWorldPos.y - anchorWorldPos.y).normalize();
-        DataManager.Instance.applyInput({
+        EventManager.Instance.emit(EventEnum.ClientSync, {
             type: InputTypeEnum.WeaponShoot,
             owner: this.owner,
             position: {
