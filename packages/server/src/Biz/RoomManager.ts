@@ -76,4 +76,12 @@ export class RoomManager extends Singleton {
             this.idMapRoom.delete(room.id);
         }
     }
+
+    startRoom(rid: number) {
+        const room = this.idMapRoom.get(rid)
+        if(room) {
+            console.log('startRoom start')
+            room.start()
+        }
+    }
 }

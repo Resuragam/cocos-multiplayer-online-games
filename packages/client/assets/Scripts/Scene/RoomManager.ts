@@ -1,6 +1,6 @@
 import { _decorator, Component, director, EditBox, instantiate, Node, Prefab } from 'cc';
 import { NetWorkManager } from '../Global/NetWorkManager';
-import { ApiMsgEnum, IApiPlayerListRes, IApiRoomListReq, IApiRoomListRes, IMsgRoom } from '../Common';
+import { ApiMsgEnum, IApiPlayerListRes, IApiRoomListReq, IApiRoomListRes, IMsgGameStart, IMsgRoom } from '../Common';
 import { PlayerManager } from '../UI/PlayerManager';
 import DataManager from '../Global/DataManager';
 import { SceneEnum } from '../Enum';
@@ -14,8 +14,9 @@ export class RoomManager extends Component {
     @property(Prefab)
     playerPerfab: Prefab;
 
-    protected onLoad(): void {
+    onLoad() {
         NetWorkManager.Instance.listenMsg(ApiMsgEnum.MsgRoom, this.renderPlayer, this);
+        NetWorkManager.Instance.listenMsg(ApiMsgEnum.MsgGameStart, this.handleGameStart, this);
     }
 
     start() {
@@ -27,6 +28,7 @@ export class RoomManager extends Component {
 
     onDestroy() {
         NetWorkManager.Instance.unlistenMsg(ApiMsgEnum.MsgRoom, this.renderPlayer, this);
+        NetWorkManager.Instance.unlistenMsg(ApiMsgEnum.MsgGameStart, this.handleGameStart, this);
     }
 
     renderPlayer({ room: { players: list } }: IMsgRoom) {
@@ -56,5 +58,18 @@ export class RoomManager extends Component {
 
         DataManager.Instance.roomInfo = null;
         director.loadScene(SceneEnum.Hall);
+    }
+
+    async handleStart() {
+        const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiGameStart, {});
+        if (!success) {
+            console.log(error);
+            return;
+        }
+    }
+
+    handleGameStart({ state }: IMsgGameStart) {
+        DataManager.Instance.state = state;
+        director.loadScene(SceneEnum.Battle);
     }
 }

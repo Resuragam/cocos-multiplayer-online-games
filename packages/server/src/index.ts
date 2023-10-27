@@ -3,6 +3,8 @@ import { PlayerManager } from './Biz/PlayerManager';
 import { RoomManager } from './Biz/RoomManager';
 import {
     ApiMsgEnum,
+    IApiGameStartReq,
+    IApiGameStartRes,
     IApiPlayerJoinReq,
     IApiPlayerJoinRes,
     IApiPlayerListReq,
@@ -122,6 +124,28 @@ server.setApi(ApiMsgEnum.ApiRoomList, (connection: Connection, data: IApiRoomLis
     return {
         list: RoomManager.Instance.getRoomsView(),
     };
+});
+
+server.setApi(ApiMsgEnum.ApiGameStart, (connection: Connection, data: IApiGameStartReq): IApiGameStartRes => {
+    if (connection.playerId) {
+        const player = PlayerManager.Instance.idMapPlayer.get(connection.playerId);
+        if (player) {
+            const rid = player.rid;
+            if (rid) {
+                RoomManager.Instance.startRoom(rid);
+                PlayerManager.Instance.syncPlayers();
+                RoomManager.Instance.syncRooms();
+                RoomManager.Instance.syncRoom(rid);
+                return {};
+            } else {
+                throw new Error('player has not in the room');
+            }
+        } else {
+            throw new Error('player is not existy');
+        }
+    } else {
+        throw new Error('not login!');
+    }
 });
 
 server

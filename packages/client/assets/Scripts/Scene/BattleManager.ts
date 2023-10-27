@@ -29,7 +29,7 @@ export class BattleManager extends Component {
         }
 
         console.log('success:', res);
-        // this.initGame();
+        this.initGame();
     }
 
     initGame() {

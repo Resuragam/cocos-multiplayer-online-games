@@ -20,9 +20,11 @@ export enum ApiMsgEnum {
     ApiRoomJoin = 'ApiRoomJoin',
     ApiRoomLeave = 'ApiRoomLeave',
     ApiRoomList = 'ApiRoomList',
+    ApiGameStart = 'ApiGameStart',
     MsgPlayerList = 'MsgPlayerList',
     MsgRoomList = 'MsgRoomList',
     MsgRoom = 'MsgRoom',
+    MsgGameStart= 'MsgGameStart',
     MsgClientSync = 'MsgClientSync',
     MsgServerSync = 'MsgServerSync',
 }
