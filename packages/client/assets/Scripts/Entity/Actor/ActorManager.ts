@@ -39,7 +39,7 @@ export class ActorManager extends EntityManager {
         if (DataManager.Instance.jm.input.length()) {
             const { x, y } = DataManager.Instance.jm.input;
             EventManager.Instance.emit(EventEnum.ClientSync, {
-                id: 1,
+                id: DataManager.Instance.myPlayerId,
                 type: InputTypeEnum.ActorMove,
                 direction: {
                     x,
