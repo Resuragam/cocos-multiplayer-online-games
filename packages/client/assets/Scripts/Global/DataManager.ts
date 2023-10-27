@@ -24,6 +24,7 @@ export default class DataManager extends Singleton {
     }
 
     myPlayerId = 1;
+    frameId = 1;
 
     stage: Node;
     jm: JoyStickManager;

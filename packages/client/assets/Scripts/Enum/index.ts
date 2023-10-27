@@ -12,7 +12,8 @@ export enum ParamsNameEnum {
 export enum EventEnum {
     WeaponShoot = 'WeaponShoot',
     ExplosionBorn = 'ExplosionBorn',
-    BulletBorn = 'BulletBorn'
+    BulletBorn = 'BulletBorn',
+    ClientSync = 'ClientSync',
 }
 
 export enum PrefabPathEnum {
