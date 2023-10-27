@@ -1,4 +1,4 @@
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, IState, InputTypeEnum } from '../Common';
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, IState, InputTypeEnum, toFixed } from '../Common';
 import { Connection } from '../Core';
 import { Player } from './Player';
 import { PlayerManager } from './PlayerManager';
@@ -107,7 +107,7 @@ export class Room {
         const now = process.uptime();
         const dt = now - (this.lastTime ?? now);
 
-        this.pendingInput.push({ type: InputTypeEnum.TimePast, dt });
+        this.pendingInput.push({ type: InputTypeEnum.TimePast, dt: toFixed(dt) });
 
         this.lastTime = now;
     }

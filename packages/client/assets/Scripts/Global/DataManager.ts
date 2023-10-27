@@ -1,6 +1,6 @@
 import { Prefab, SpriteFrame, Node } from 'cc';
 import Singleton from '../Base/Singleton';
-import { EntityTypeEnum, IActorMove, IBullet, IClientInput, IRoom, IState, InputTypeEnum } from '../Common';
+import { EntityTypeEnum, IActorMove, IBullet, IClientInput, IRoom, IState, InputTypeEnum, toFixed } from '../Common';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { JoyStickManager } from '../UI/JoyStickManager';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
@@ -33,7 +33,7 @@ export default class DataManager extends Singleton {
     bulletMap: Map<number, BulletManager> = new Map();
     prefabMap: Map<string, Prefab> = new Map();
     textureMap: Map<string, SpriteFrame[]> = new Map();
-    
+
     lastState: IState;
     state: IState = {
         actors: [],
@@ -55,8 +55,8 @@ export default class DataManager extends Singleton {
                 actor.direction.x = x;
                 actor.direction.y = y;
 
-                actor.position.x = actor.position.x + x * dt * ACTOR_SPEED;
-                actor.position.y = actor.position.y + y * dt * ACTOR_SPEED;
+                actor.position.x = toFixed(actor.position.x + x * dt * ACTOR_SPEED);
+                actor.position.y = toFixed(actor.position.y + y * dt * ACTOR_SPEED);
                 break;
             }
 
@@ -85,7 +85,10 @@ export default class DataManager extends Singleton {
                         const actor = actors[j];
                         if ((actor.position.x - bullet.position.x) ** 2 + (actor.position.y - bullet.position.y) ** 2 < (ACTOR_RADIUS + BULLET_RADIUS) ** 2) {
                             actor.hp = actor.hp - BULLTE_DEMAGE;
-                            EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, { x: (actor.position.x + bullet.position.x) / 2, y: (actor.position.y + bullet.position.y) / 2 });
+                            EventManager.Instance.emit(EventEnum.ExplosionBorn, bullet.id, {
+                                x: toFixed((actor.position.x + bullet.position.x) / 2),
+                                y: toFixed((actor.position.y + bullet.position.y) / 2),
+                            });
                             bullets.splice(i, 1);
                             break;
                         }
@@ -97,8 +100,8 @@ export default class DataManager extends Singleton {
                     }
                 }
                 for (const bullet of bullets) {
-                    bullet.position.x = bullet.position.x + bullet.direction.x * dt * BULLET_SPEED;
-                    bullet.position.y = bullet.position.y + bullet.direction.y * dt * BULLET_SPEED;
+                    bullet.position.x = toFixed(bullet.position.x + bullet.direction.x * dt * BULLET_SPEED);
+                    bullet.position.y = toFixed(bullet.position.y + bullet.direction.y * dt * BULLET_SPEED);
                 }
             }
         }
