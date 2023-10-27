@@ -8,7 +8,7 @@ interface IItem {
 
 interface ICallApiRet {
     success: boolean;
-    res?: unknown;
+    res?: any;
     error?: Error;
 }
 
@@ -17,20 +17,28 @@ export class NetWorkManager extends Singleton {
         return super.GetInstance<NetWorkManager>();
     }
 
+    isConnected: boolean;
     ws: WebSocket;
     port: number = 9876;
     private map: Map<string, Array<IItem>> = new Map();
 
     connect() {
         return new Promise((resolve, reject) => {
+            if (this.isConnected) {
+                resolve(true);
+                return;
+            }
             this.ws = new WebSocket(`ws://localhost:${this.port}`);
             this.ws.onopen = () => {
+                this.isConnected = true;
                 resolve(true);
             };
             this.ws.onclose = () => {
+                this.isConnected = false;
                 reject(false);
             };
             this.ws.onerror = (e) => {
+                this.isConnected = false;
                 console.log(e);
                 reject(false);
             };
@@ -50,7 +58,7 @@ export class NetWorkManager extends Singleton {
         });
     }
 
-    callApi(name: string, data): Promise<ICallApiRet> {
+    callApi(name: string, data: any): Promise<ICallApiRet> {
         return new Promise((resolve) => {
             try {
                 let timer = setTimeout(() => {

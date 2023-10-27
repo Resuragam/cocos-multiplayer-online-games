@@ -1,3 +1,5 @@
+import { Player } from './Biz/Player';
+import { PlayerManager } from './Biz/PlayerManager';
 import { ApiMsgEnum } from './Common';
 import { Connection, MyServer } from './Core';
 import { symlinkCommon } from './Utils';
@@ -5,12 +7,35 @@ import { WebSocketServer } from 'ws';
 
 symlinkCommon();
 
+declare module './Core' {
+    interface Connection {
+        playerId: number;
+    }
+}
+
 const server = new MyServer({
     port: 9876,
 });
 
-server.setApi(ApiMsgEnum.ApiPlayerJoin, (connect: Connection, data: unknown) => {
-    return data + 'I am server, i know you!';
+server.on('connection', (connection: Connection) => {
+    console.log('people connected', server.connections.size);
+});
+
+server.on('disconnection', (connection: Connection) => {
+    console.log('people disconnected', server.connections.size);
+    if (connection.playerId) {
+        PlayerManager.Instance.removePlayer(connection.playerId);
+    }
+    console.log('PlayerManager.Instance.players.size', PlayerManager.Instance.players.size);
+});
+
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: any) => {
+    const { nickname } = data;
+    const player = PlayerManager.Instance.createPlayer({ nickname, connection });
+    connection.playerId = player.id;
+    return {
+        player: PlayerManager.Instance.getPlayerView(player),
+    };
 });
 
 server
