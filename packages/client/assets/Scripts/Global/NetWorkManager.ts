@@ -6,6 +6,12 @@ interface IItem {
     ctx: unknown;
 }
 
+interface ICallApiRet {
+    success: boolean;
+    res?: unknown;
+    error?: Error;
+}
+
 export class NetWorkManager extends Singleton {
     static get Instance() {
         return super.GetInstance<NetWorkManager>();
@@ -41,6 +47,29 @@ export class NetWorkManager extends Singleton {
                     console.log(e.message);
                 }
             };
+        });
+    }
+
+    callApi(name: string, data): Promise<ICallApiRet> {
+        return new Promise((resolve) => {
+            try {
+                let timer = setTimeout(() => {
+                    resolve({ success: false, error: new Error('Time out!') });
+                    this.unlistenMsg(name, cb, null);
+                }, 5000);
+                const cb = (res) => {
+                    resolve(res);
+                    clearTimeout(timer);
+                    this.unlistenMsg(name, cb, null);
+                };
+                this.listenMsg(name, cb, this);
+                this.sendMsg(name, data);
+            } catch (error) {
+                resolve({
+                    success: false,
+                    error,
+                });
+            }
         });
     }
 

@@ -22,7 +22,14 @@ export class BattleManager extends Component {
     async start() {
         this.clearGame();
         await Promise.all([this.connectServer(), this.loadRes()]);
-        this.initGame();
+        const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiPlayerJoin, 'I am cocos. ');
+        if (!success) {
+            console.log(error);
+            return;
+        }
+
+        console.log('success:', res);
+        // this.initGame();
     }
 
     initGame() {
@@ -148,6 +155,6 @@ export class BattleManager extends Component {
     handleServerSync({ inputs }: any) {
         for (const input of inputs) {
             DataManager.Instance.applyInput(input);
-        } 
+        }
     }
 }

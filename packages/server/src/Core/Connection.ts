@@ -22,6 +22,31 @@ export class Connection extends EventEmitter {
                 const msg = JSON.parse(str);
                 const { name, data } = msg;
                 const { frameId, input } = data;
+                if (this.servere.apiMap.has(name)) {
+                    try {
+                        const cb = this.servere.apiMap.get(name);
+                        const res = cb.call(null, this, data);
+                        this.sendMsg(name, {
+                            success: true,
+                            res,
+                        });
+                    } catch (e) {
+                        this.sendMsg(name, {
+                            success: false,
+                            res: e.message,
+                        });
+                    }
+                } else {
+                    try {
+                        if (this.msgMap.has(name)) {
+                            this.msgMap.get(name).forEach(({ cb, ctx }) => {
+                                cb.call(ctx, data);
+                            });
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
             } catch (error) {
                 console.log(error.message);
             }

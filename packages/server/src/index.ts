@@ -1,19 +1,26 @@
 import { ApiMsgEnum } from './Common';
-import { MyServer } from './Core';
+import { Connection, MyServer } from './Core';
 import { symlinkCommon } from './Utils';
 import { WebSocketServer } from 'ws';
 
 symlinkCommon();
 
 const server = new MyServer({
-    port: 9876
+    port: 9876,
 });
 
-server.start().then(() => {
-    console.log('Server started');
-}).catch((error) => {
-    console.log(error)
-})
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connect: Connection, data: unknown) => {
+    return data + 'I am server, i know you!';
+});
+
+server
+    .start()
+    .then(() => {
+        console.log('Server started');
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 
 // const wss = new WebSocketServer({
 //     port: 9876,
