@@ -41,5 +41,6 @@ export enum EntityStateEnum {
 
 export enum SceneEnum {
     Login = 'Login',
-    Battle = 'Battle'
+    Battle = 'Battle',
+    Hall = 'Hall'
 }

@@ -43,6 +43,6 @@ export class LoginManager extends Component {
         DataManager.Instance.myPlayerId = res.player.id;
         console.log('login success: ', res);
 
-        director.loadScene(SceneEnum.Battle);
+        director.loadScene(SceneEnum.Hall);
     }
 }

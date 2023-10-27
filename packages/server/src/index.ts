@@ -1,6 +1,6 @@
 import { Player } from './Biz/Player';
 import { PlayerManager } from './Biz/PlayerManager';
-import { ApiMsgEnum, IApiPlayerJoinReq } from './Common';
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerListReq } from './Common';
 import { Connection, MyServer } from './Core';
 import { symlinkCommon } from './Utils';
 import { WebSocketServer } from 'ws';
@@ -35,6 +35,12 @@ server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlaye
     connection.playerId = player.id;
     return {
         player: PlayerManager.Instance.getPlayerView(player),
+    };
+});
+
+server.setApi(ApiMsgEnum.ApiPlayerList, (connection: Connection, data: IApiPlayerListReq) => {
+    return {
+        list: PlayerManager.Instance.getPlayersView(),
     };
 });
 

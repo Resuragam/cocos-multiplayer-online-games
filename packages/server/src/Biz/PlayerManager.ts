@@ -28,6 +28,10 @@ export class PlayerManager extends Singleton {
         }
     }
 
+    getPlayersView(players: Set<Player> = this.players) {
+        return [...players].map((player) => this.getPlayerView(player));
+    }
+
     getPlayerView({ id, nickname, rid }: Player) {
         return {
             id,
