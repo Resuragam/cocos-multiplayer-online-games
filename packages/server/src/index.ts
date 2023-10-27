@@ -1,6 +1,7 @@
 import { Player } from './Biz/Player';
 import { PlayerManager } from './Biz/PlayerManager';
-import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerListReq } from './Common';
+import { RoomManager } from './Biz/RoomManager';
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes } from './Common';
 import { Connection, MyServer } from './Core';
 import { symlinkCommon } from './Utils';
 import { WebSocketServer } from 'ws';
@@ -26,23 +27,39 @@ server.on('disconnection', (connection: Connection) => {
     if (connection.playerId) {
         PlayerManager.Instance.removePlayer(connection.playerId);
     }
-    PlayerManager.Instance.syncPlayers()
+    PlayerManager.Instance.syncPlayers();
 });
 
-server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq) => {
+server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq): IApiPlayerJoinRes => {
     const { nickname } = data;
     const player = PlayerManager.Instance.createPlayer({ nickname, connection });
     connection.playerId = player.id;
-    PlayerManager.Instance.syncPlayers()
+    PlayerManager.Instance.syncPlayers();
     return {
         player: PlayerManager.Instance.getPlayerView(player),
     };
 });
 
-server.setApi(ApiMsgEnum.ApiPlayerList, (connection: Connection, data: IApiPlayerListReq) => {
+server.setApi(ApiMsgEnum.ApiPlayerList, (connection: Connection, data: IApiPlayerListReq): IApiPlayerListRes => {
     return {
         list: PlayerManager.Instance.getPlayersView(),
     };
+});
+
+server.setApi(ApiMsgEnum.ApiRoomCreate, (connection: Connection, data: IApiRoomCreateReq): IApiRoomCreateRes => {
+    if (connection.playerId) {
+        const newRoom = RoomManager.Instance.createRoom();
+        const room = RoomManager.Instance.joinRoom(newRoom.id, connection.playerId);
+        if(room) {
+            return {
+                room: RoomManager.Instance.getRoomView(room)
+            }
+        }else {
+            throw new Error('room has not existy')
+        }
+    } else {
+        throw new Error('not login!');
+    }
 });
 
 server

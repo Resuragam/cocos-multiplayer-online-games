@@ -1,7 +1,9 @@
-import { _decorator, Component, EditBox, instantiate, Node, Prefab } from 'cc';
+import { _decorator, Component, director, EditBox, instantiate, Node, Prefab } from 'cc';
 import { NetWorkManager } from '../Global/NetWorkManager';
 import { ApiMsgEnum, IApiPlayerListRes } from '../Common';
 import { PlayerManager } from '../UI/PlayerManager';
+import DataManager from '../Global/DataManager';
+import { SceneEnum } from '../Enum';
 const { ccclass, property } = _decorator;
 
 @ccclass('HallManager')
@@ -13,13 +15,13 @@ export class HallManager extends Component {
     playerPerfab: Prefab;
 
     start() {
-        NetWorkManager.Instance.listenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this)
+        NetWorkManager.Instance.listenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this);
         this.playerContainer.destroyAllChildren();
         this.getPlayers();
     }
 
     protected onDestroy(): void {
-        NetWorkManager.Instance.unlistenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this)
+        NetWorkManager.Instance.unlistenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this);
     }
 
     async getPlayers() {
@@ -49,5 +51,17 @@ export class HallManager extends Component {
             const node = this.playerContainer.children[i];
             node.getComponent(PlayerManager).init(data);
         }
+    }
+
+    async handleCreateRoom() {
+        const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiRoomCreate, {});
+        if (!success) {
+            console.log(error);
+            return;
+        }
+
+        DataManager.Instance.roomInfo = res.room;
+        console.log('DataManager.Instance.roomInfo', DataManager.Instance.roomInfo);
+        director.loadScene(SceneEnum.Room)
     }
 }
