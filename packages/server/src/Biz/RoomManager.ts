@@ -36,9 +36,9 @@ export class RoomManager extends Singleton {
     //     }
     // }
     syncRoom(rid: number) {
-        const room = this.idMapRoom.get(rid)
-        if(room) {
-            room.sync()
+        const room = this.idMapRoom.get(rid);
+        if (room) {
+            room.sync();
         }
     }
 
@@ -59,5 +59,21 @@ export class RoomManager extends Singleton {
             id,
             players: PlayerManager.Instance.getPlayersView(players),
         };
+    }
+
+    leaveRoom(rid: number, uid: number) {
+        const room = this.idMapRoom.get(rid);
+        if (room) {
+            room.leave(uid);
+        }
+    }
+
+    closeRoom(rid: number) {
+        const room = this.idMapRoom.get(rid);
+        if (room) {
+            room.close()
+            this.rooms.delete(room);
+            this.idMapRoom.delete(room.id);
+        }
     }
 }

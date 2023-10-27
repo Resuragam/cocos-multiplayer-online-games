@@ -18,6 +18,7 @@ export enum ApiMsgEnum {
     ApiPlayerList = 'ApiPlayerList',
     ApiRoomCreate = 'ApiRoomCreate',
     ApiRoomJoin = 'ApiRoomJoin',
+    ApiRoomLeave = 'ApiRoomLeave',
     ApiRoomList = 'ApiRoomList',
     MsgPlayerList = 'MsgPlayerList',
     MsgRoomList = 'MsgRoomList',

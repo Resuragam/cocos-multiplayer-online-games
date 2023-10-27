@@ -21,8 +21,8 @@ export class RoomManager extends Component {
     start() {
         // this.playerContainer.destroyAllChildren();
         this.renderPlayer({
-            room: DataManager.Instance.roomInfo
-        })
+            room: DataManager.Instance.roomInfo,
+        });
     }
 
     onDestroy() {
@@ -45,5 +45,16 @@ export class RoomManager extends Component {
             const node = this.playerContainer.children[i];
             node.getComponent(PlayerManager).init(data);
         }
+    }
+
+    async handleLeaveRoom(rid: number) {
+        const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiRoomLeave, {});
+        if (!success) {
+            console.log(error);
+            return;
+        }
+
+        DataManager.Instance.roomInfo = null;
+        director.loadScene(SceneEnum.Hall);
     }
 }

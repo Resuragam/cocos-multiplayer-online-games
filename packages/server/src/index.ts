@@ -11,6 +11,8 @@ import {
     IApiRoomCreateRes,
     IApiRoomJoinReq,
     IApiRoomJoinRes,
+    IApiRoomLeaveReq,
+    IApiRoomLeaveRes,
     IApiRoomListReq,
     IApiRoomListRes,
 } from './Common';
@@ -88,6 +90,28 @@ server.setApi(ApiMsgEnum.ApiRoomJoin, (connection: Connection, { rid }: IApiRoom
             };
         } else {
             throw new Error('room has not existy');
+        }
+    } else {
+        throw new Error('not login!');
+    }
+});
+
+server.setApi(ApiMsgEnum.ApiRoomLeave, (connection: Connection, data: IApiRoomLeaveReq): IApiRoomLeaveRes => {
+    if (connection.playerId) {
+        const player = PlayerManager.Instance.idMapPlayer.get(connection.playerId);
+        if (player) {
+            const rid = player.rid;
+            if (rid) {
+                RoomManager.Instance.leaveRoom(rid, connection.playerId);
+                PlayerManager.Instance.syncPlayers();
+                RoomManager.Instance.syncRooms();
+                RoomManager.Instance.syncRoom(rid);
+                return {};
+            } else {
+                throw new Error('player has not in the room');
+            }
+        } else {
+            throw new Error('player is not existy');
         }
     } else {
         throw new Error('not login!');
