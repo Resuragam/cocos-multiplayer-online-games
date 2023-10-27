@@ -1,5 +1,5 @@
 import Singleton from '../Base/Singleton';
-import { IApiPlayerJoinReq } from '../Common';
+import { ApiMsgEnum, IApiPlayerJoinReq } from '../Common';
 import { Connection } from '../Core';
 import { Player } from './Player';
 
@@ -25,6 +25,14 @@ export class PlayerManager extends Singleton {
         if (player) {
             this.players.delete(player);
             this.idMapPlayer.delete(player.id);
+        }
+    }
+
+    syncPlayers() {
+        for (const player of this.players) {
+            player.connection.sendMsg(ApiMsgEnum.MsgPlayerList, {
+                list: this.getPlayersView(),
+            });
         }
     }
 

@@ -13,8 +13,13 @@ export class HallManager extends Component {
     playerPerfab: Prefab;
 
     start() {
+        NetWorkManager.Instance.listenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this)
         this.playerContainer.destroyAllChildren();
         this.getPlayers();
+    }
+
+    protected onDestroy(): void {
+        NetWorkManager.Instance.unlistenMsg(ApiMsgEnum.MsgPlayerList, this.renderPlayer, this)
     }
 
     async getPlayers() {

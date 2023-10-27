@@ -14,7 +14,7 @@ declare module './Core' {
 }
 
 const server = new MyServer({
-    port: 9876,
+    port: 9878,
 });
 
 server.on('connection', (connection: Connection) => {
@@ -26,13 +26,14 @@ server.on('disconnection', (connection: Connection) => {
     if (connection.playerId) {
         PlayerManager.Instance.removePlayer(connection.playerId);
     }
-    console.log('PlayerManager.Instance.players.size', PlayerManager.Instance.players.size);
+    PlayerManager.Instance.syncPlayers()
 });
 
 server.setApi(ApiMsgEnum.ApiPlayerJoin, (connection: Connection, data: IApiPlayerJoinReq) => {
     const { nickname } = data;
     const player = PlayerManager.Instance.createPlayer({ nickname, connection });
     connection.playerId = player.id;
+    PlayerManager.Instance.syncPlayers()
     return {
         player: PlayerManager.Instance.getPlayerView(player),
     };
@@ -54,7 +55,7 @@ server
     });
 
 // const wss = new WebSocketServer({
-//     port: 9876,
+//     port: 9878,
 // });
 
 // let inputs = [];

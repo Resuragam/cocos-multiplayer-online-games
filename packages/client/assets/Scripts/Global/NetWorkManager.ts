@@ -20,7 +20,7 @@ export class NetWorkManager extends Singleton {
 
     isConnected: boolean;
     ws: WebSocket;
-    port: number = 9876;
+    port: number = 9878;
     private map: Map<string, Array<IItem>> = new Map();
 
     connect() {
