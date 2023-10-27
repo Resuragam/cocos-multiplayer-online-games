@@ -4,31 +4,32 @@ import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { EventEnum, PrefabPathEnum, TexturePathEnum } from '../Enum';
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgServerSync, InputTypeEnum } from '../Common';
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgClientSync, IMsgServerSync, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
 import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 import { NetWorkManager } from '../Global/NetWorkManager';
 import EventManager from '../Global/EventManager';
+import { deepClone } from '../Utils';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleManager')
 export class BattleManager extends Component {
     private stage: Node;
     private ui: Node;
-
+    private pendingMsg: IMsgClientSync[] = [];
     private shouldUpdate = false;
     onLoad() {}
 
     async start() {
         this.clearGame();
         await Promise.all([this.connectServer(), this.loadRes()]);
-        const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiPlayerJoin, 'I am cocos. ');
-        if (!success) {
-            console.log(error);
-            return;
-        }
+        // const { success, error, res } = await NetWorkManager.Instance.callApi(ApiMsgEnum.ApiPlayerJoin, 'I am cocos. ');
+        // if (!success) {
+        //     console.log(error);
+        //     return;
+        // }
 
-        console.log('success:', res);
+        // console.log('success:', res);
         this.initGame();
     }
 
@@ -150,11 +151,25 @@ export class BattleManager extends Component {
             frameId: DataManager.Instance.frameId++,
         };
         NetWorkManager.Instance.sendMsg(ApiMsgEnum.MsgClientSync, msg);
+
+        if (input.type === InputTypeEnum.ActorMove) {
+            DataManager.Instance.applyInput(input);
+            this.pendingMsg.push(msg);
+        }
     }
 
-    handleServerSync({ inputs }: IMsgServerSync) {
+    handleServerSync({ inputs, lastFrameId }: IMsgServerSync) {
+        DataManager.Instance.state = DataManager.Instance.lastState;
         for (const input of inputs) {
             DataManager.Instance.applyInput(input);
+        }
+
+        DataManager.Instance.lastState = deepClone(DataManager.Instance.state);
+
+        this.pendingMsg = this.pendingMsg.filter((msg) => msg.frameId > lastFrameId);
+
+        for (const msg of this.pendingMsg) {
+            DataManager.Instance.applyInput(msg.input);
         }
     }
 }

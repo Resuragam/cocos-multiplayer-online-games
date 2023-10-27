@@ -33,7 +33,8 @@ export default class DataManager extends Singleton {
     bulletMap: Map<number, BulletManager> = new Map();
     prefabMap: Map<string, Prefab> = new Map();
     textureMap: Map<string, SpriteFrame[]> = new Map();
-
+    
+    lastState: IState;
     state: IState = {
         actors: [],
         bullets: [],

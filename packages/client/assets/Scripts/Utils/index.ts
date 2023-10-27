@@ -9,3 +9,19 @@ export const sortSpriteFrame = (spriteFrame: Array<SpriteFrame>) => spriteFrame.
 export const rad2Angle = (rad: number) => {
     return (rad / Math.PI) * 180;
 };
+
+export const deepClone = (obj: any) => {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+
+    const res = Array.isArray(obj) ? [] : {};
+
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            res[key] = deepClone(obj[key]);
+        }
+    }
+
+    return res;
+};

@@ -4,6 +4,7 @@ import { ApiMsgEnum, IApiPlayerListRes, IApiRoomListReq, IApiRoomListRes, IMsgGa
 import { PlayerManager } from '../UI/PlayerManager';
 import DataManager from '../Global/DataManager';
 import { SceneEnum } from '../Enum';
+import { deepClone } from '../Utils';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomManager')
@@ -70,6 +71,7 @@ export class RoomManager extends Component {
 
     handleGameStart({ state }: IMsgGameStart) {
         DataManager.Instance.state = state;
+        DataManager.Instance.lastState = deepClone(state);
         director.loadScene(SceneEnum.Battle);
     }
 }
