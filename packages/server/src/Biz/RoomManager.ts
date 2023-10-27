@@ -35,6 +35,12 @@ export class RoomManager extends Singleton {
     //         this.idMapPlayer.delete(player.id);
     //     }
     // }
+    syncRoom(rid: number) {
+        const room = this.idMapRoom.get(rid)
+        if(room) {
+            room.sync()
+        }
+    }
 
     syncRooms() {
         for (const player of PlayerManager.Instance.players) {
