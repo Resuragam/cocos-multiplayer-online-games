@@ -1,4 +1,5 @@
 import Singleton from '../Base/Singleton';
+import { ApiMsgEnum } from '../Common';
 import { PlayerManager } from './PlayerManager';
 import { Room } from './Room';
 
@@ -20,10 +21,10 @@ export class RoomManager extends Singleton {
     }
 
     joinRoom(rid: number, uid: number) {
-        const room = this.idMapRoom.get(rid)
-        if(room) {
-            room.join(uid)
-            return room
+        const room = this.idMapRoom.get(rid);
+        if (room) {
+            room.join(uid);
+            return room;
         }
     }
 
@@ -35,13 +36,13 @@ export class RoomManager extends Singleton {
     //     }
     // }
 
-    // syncPlayers() {
-    //     for (const player of this.players) {
-    //         player.connection.sendMsg(ApiMsgEnum.MsgPlayerList, {
-    //             list: this.getPlayersView(),
-    //         });
-    //     }
-    // }
+    syncRooms() {
+        for (const player of PlayerManager.Instance.players) {
+            player.connection.sendMsg(ApiMsgEnum.MsgRoomList, {
+                list: this.getRoomsView(),
+            });
+        }
+    }
 
     getRoomsView(rooms: Set<Room> = this.rooms) {
         return [...rooms].map((room) => this.getRoomView(room));

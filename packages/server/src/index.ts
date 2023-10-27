@@ -1,7 +1,7 @@
 import { Player } from './Biz/Player';
 import { PlayerManager } from './Biz/PlayerManager';
 import { RoomManager } from './Biz/RoomManager';
-import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes } from './Common';
+import { ApiMsgEnum, IApiPlayerJoinReq, IApiPlayerJoinRes, IApiPlayerListReq, IApiPlayerListRes, IApiRoomCreateReq, IApiRoomCreateRes, IApiRoomListReq, IApiRoomListRes } from './Common';
 import { Connection, MyServer } from './Core';
 import { symlinkCommon } from './Utils';
 import { WebSocketServer } from 'ws';
@@ -50,16 +50,24 @@ server.setApi(ApiMsgEnum.ApiRoomCreate, (connection: Connection, data: IApiRoomC
     if (connection.playerId) {
         const newRoom = RoomManager.Instance.createRoom();
         const room = RoomManager.Instance.joinRoom(newRoom.id, connection.playerId);
-        if(room) {
+        if (room) {
+            PlayerManager.Instance.syncPlayers()
+            RoomManager.Instance.syncRooms();
             return {
-                room: RoomManager.Instance.getRoomView(room)
-            }
-        }else {
-            throw new Error('room has not existy')
+                room: RoomManager.Instance.getRoomView(room),
+            };
+        } else {
+            throw new Error('room has not existy');
         }
     } else {
         throw new Error('not login!');
     }
+});
+
+server.setApi(ApiMsgEnum.ApiRoomList, (connection: Connection, data: IApiRoomListReq): IApiRoomListRes => {
+    return {
+        list: RoomManager.Instance.getRoomsView(),
+    };
 });
 
 server
