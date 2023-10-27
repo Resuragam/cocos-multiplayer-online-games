@@ -4,7 +4,7 @@ import { JoyStickManager } from '../UI/JoyStickManager';
 import { ResourceManager } from '../Global/ResourceManager';
 import { ActorManager } from '../Entity/Actor/ActorManager';
 import { EventEnum, PrefabPathEnum, TexturePathEnum } from '../Enum';
-import { ApiMsgEnum, EntityTypeEnum, IClientInput, InputTypeEnum } from '../Common';
+import { ApiMsgEnum, EntityTypeEnum, IClientInput, IMsgServerSync, InputTypeEnum } from '../Common';
 import { BulletManager } from '../Entity/Bullet/BulletManager';
 import { ObjectPoolManager } from '../Global/ObjectPoolManager';
 import { NetWorkManager } from '../Global/NetWorkManager';
@@ -152,7 +152,7 @@ export class BattleManager extends Component {
         NetWorkManager.Instance.sendMsg(ApiMsgEnum.MsgClientSync, msg);
     }
 
-    handleServerSync({ inputs }: any) {
+    handleServerSync({ inputs }: IMsgServerSync) {
         for (const input of inputs) {
             DataManager.Instance.applyInput(input);
         }

@@ -1,4 +1,6 @@
 import Singleton from '../Base/Singleton';
+import { IApiPlayerJoinReq } from '../Common';
+import { Connection } from '../Core';
 import { Player } from './Player';
 
 export class PlayerManager extends Singleton {
@@ -11,7 +13,7 @@ export class PlayerManager extends Singleton {
     players: Set<Player> = new Set();
     idMapPlayer: Map<number, Player> = new Map();
 
-    createPlayer({ nickname, connection }: any) {
+    createPlayer({ nickname, connection }: IApiPlayerJoinReq & { connection: Connection }) {
         const player = new Player({ id: this.nextPlayerId++, nickname, connection });
         this.players.add(player);
         this.idMapPlayer.set(player.id, player);
