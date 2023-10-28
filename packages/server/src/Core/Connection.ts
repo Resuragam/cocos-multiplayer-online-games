@@ -1,7 +1,9 @@
 import { EventEmitter } from 'stream';
 import { MyServer } from './MyServer';
 import { WebSocket } from 'ws';
-import { IModel, strdecode, strencode } from '../Common';
+import { ApiMsgEnum, IModel, strdecode, strencode } from '../Common';
+import { binaryDecode, binaryEncode } from '../Common/Binary';
+import { buffer2ArrayBuffer } from '../Utils';
 
 interface IItem {
     cb: Function;
@@ -9,7 +11,7 @@ interface IItem {
 }
 
 export class Connection extends EventEmitter {
-    private msgMap: Map<string, Array<IItem>> = new Map();
+    private msgMap: Map<ApiMsgEnum, Array<IItem>> = new Map();
 
     constructor(private servere: MyServer, private ws: WebSocket) {
         super();
@@ -18,11 +20,9 @@ export class Connection extends EventEmitter {
         });
 
         this.ws.on('message', (buffer: Buffer) => {
-            const ta = new Uint8Array(buffer);
-            const str = strdecode(ta);
             try {
-                const msg = JSON.parse(str);
-                const { name, data } = msg;
+                const json = binaryDecode(buffer2ArrayBuffer(buffer));
+                const { name, data } = json;
                 const { frameId, input } = data;
                 if (this.servere.apiMap.has(name)) {
                     try {
@@ -60,9 +60,8 @@ export class Connection extends EventEmitter {
             name,
             data,
         };
-        const str = JSON.stringify(msg);
-        const ta = strencode(str);
-        const buffer = Buffer.from(ta)
+        const da = binaryEncode(name, data);
+        const buffer = Buffer.from(da.buffer);
         this.ws.send(buffer);
     }
 

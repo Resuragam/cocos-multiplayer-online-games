@@ -1,6 +1,7 @@
 import { _decorator, resources, Asset } from 'cc';
 import Singleton from '../Base/Singleton';
-import { IModel, strdecode, strencode } from '../Common';
+import { ApiMsgEnum, IModel, strdecode, strencode } from '../Common';
+import { binaryDecode, binaryEncode } from '../Common/Binary';
 
 interface IItem {
     cb: Function;
@@ -21,7 +22,7 @@ export class NetWorkManager extends Singleton {
     isConnected: boolean;
     ws: WebSocket;
     port: number = 9878;
-    private map: Map<string, Array<IItem>> = new Map();
+    private map: Map<ApiMsgEnum, Array<IItem>> = new Map();
 
     connect() {
         return new Promise((resolve, reject) => {
@@ -30,7 +31,7 @@ export class NetWorkManager extends Singleton {
                 return;
             }
             this.ws = new WebSocket(`ws://localhost:${this.port}`);
-            this.ws.binaryType = 'arraybuffer'
+            this.ws.binaryType = 'arraybuffer';
             this.ws.onopen = () => {
                 this.isConnected = true;
                 resolve(true);
@@ -46,9 +47,7 @@ export class NetWorkManager extends Singleton {
             };
             this.ws.onmessage = (e) => {
                 try {
-                    const ta = new Uint8Array(e.data);
-                    const str = strdecode(ta);
-                    const json = JSON.parse(str);
+                    const json = binaryDecode(e.data);
                     const { name, data } = json;
                     if (this.map.has(name)) {
                         this.map.get(name).forEach(({ cb, ctx }) => {
@@ -90,13 +89,7 @@ export class NetWorkManager extends Singleton {
             name,
             data,
         };
-        const str = JSON.stringify(msg);
-        const ta = strencode(str);
-        const ab = new ArrayBuffer(ta.length);
-        const da = new DataView(ab);
-        for (let index = 0; index < ta.length; index++) {
-            da.setUint8(index, ta[index]);
-        }
+        const da = binaryEncode(name, data);
         this.ws.send(da.buffer);
     }
 
