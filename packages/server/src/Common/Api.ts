@@ -50,3 +50,11 @@ export interface IApiRoomLeaveRes {}
 export interface IApiGameStartReq {}
 
 export interface IApiGameStartRes {}
+
+export interface IApiPlayerRegisterReq {
+    nickname: string;
+}
+
+export interface IApiPlayerRegisterRes {
+    
+}

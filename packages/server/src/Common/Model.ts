@@ -5,6 +5,8 @@ import {
     IApiPlayerJoinRes,
     IApiPlayerListReq,
     IApiPlayerListRes,
+    IApiPlayerRegisterReq,
+    IApiPlayerRegisterRes,
     IApiRoomCreateReq,
     IApiRoomCreateRes,
     IApiRoomJoinReq,
@@ -47,6 +49,10 @@ export interface IModel {
             req: IApiGameStartReq;
             res: IApiGameStartRes;
         };
+        [ApiMsgEnum.ApiPlayerRegister]: {
+            req: IApiPlayerRegisterReq;
+            res: IApiPlayerRegisterRes;
+        };
     };
     msg: {
         [ApiMsgEnum.MsgPlayerList]: IMsgPlayerList;
@@ -54,6 +60,6 @@ export interface IModel {
         [ApiMsgEnum.MsgRoom]: IMsgRoom;
         [ApiMsgEnum.MsgClientSync]: IMsgClientSync;
         [ApiMsgEnum.MsgServerSync]: IMsgServerSync;
-        [ApiMsgEnum.MsgGameStart]: IMsgGameStart
+        [ApiMsgEnum.MsgGameStart]: IMsgGameStart;
     };
 }

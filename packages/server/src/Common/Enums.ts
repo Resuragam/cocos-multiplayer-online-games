@@ -27,4 +27,6 @@ export enum ApiMsgEnum {
     MsgGameStart,
     MsgClientSync,
     MsgServerSync,
+
+    ApiPlayerRegister,
 }
