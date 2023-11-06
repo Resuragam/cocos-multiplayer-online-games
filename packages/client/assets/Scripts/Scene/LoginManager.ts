@@ -45,4 +45,8 @@ export class LoginManager extends Component {
 
         director.loadScene(SceneEnum.Hall);
     }
+
+    clickToRegister() {
+        director.loadScene(SceneEnum.Register);
+    }
 }

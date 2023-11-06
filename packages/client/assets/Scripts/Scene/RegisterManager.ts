@@ -39,4 +39,6 @@ export class RegisterManager extends Component {
 
         director.loadScene(SceneEnum.Login);
     }
+
+
 }

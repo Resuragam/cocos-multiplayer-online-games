@@ -9,6 +9,8 @@ import {
     IApiPlayerJoinRes,
     IApiPlayerListReq,
     IApiPlayerListRes,
+    IApiPlayerRegisterReq,
+    IApiPlayerRegisterRes,
     IApiRoomCreateReq,
     IApiRoomCreateRes,
     IApiRoomJoinReq,
@@ -148,6 +150,10 @@ server.setApi(ApiMsgEnum.ApiGameStart, (connection: Connection, data: IApiGameSt
     }
 });
 
+server.setApi(ApiMsgEnum.ApiPlayerRegister, (connection: Connection, data: IApiPlayerRegisterReq): IApiPlayerRegisterRes => {
+    console.log(data);
+    return {};
+});
 
 server
     .start()
